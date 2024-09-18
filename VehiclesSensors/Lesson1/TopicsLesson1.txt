@@ -1,0 +1,8 @@
+Questions:
+
+- Darpa grand challange -what can we learn from it?
+- What can we learn from it?
+- what is a robot? what are the categories of a robot?
+- what is an autonomous vehicle?
+- what are the sensors? why sensors are important?
+- darpa challange vs nowadays self driving cars
