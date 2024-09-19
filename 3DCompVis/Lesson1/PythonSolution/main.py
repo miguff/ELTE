@@ -14,7 +14,6 @@ def main():
     fontScale = 1
     color = (255, 255, 255)
     thickness = 2
-    Background = np.zeros((BGRowL,BGColL,3), np.uint8)
 
     ################### Platform Setup ##########################
     PlatformWidth = 100
@@ -83,7 +82,7 @@ def main():
                   (PlatformPos[0] + PlatformWidth, PlatformPos[1] + PlatformHeight),
                   (255,0,255), -1)
     
-        cv2.imshow('Lesson 1 - Bounce Game',Background)
+        cv2.imshow('Lesson 1 - Bounce Game - Python',Background)
         if cv2.waitKey(1) & 0xff == ord('q'):
             break
         
