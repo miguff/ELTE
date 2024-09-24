@@ -12,16 +12,16 @@ fA = 440;
 n = 8; %number of components
 s3 = 0;
 for k = 1:n
-    s3 = s3 + sin(2*pi*fA*t) / 2^k*2;
+    s3 = s3 + sin(2*pi*fA*k*t) / 2^k*2;
 end
 
 %so here we are going to apply fast fourier transformation to the s3 and to
 %s5
 
-f3 = fft(s3);
-figure, plot(abs(f3))
-figure, plot(angle(f3))
-figure, plot(abs(fftshift(f3))) 
+f3 = fft(s3); %Outp has the same values as input signal, but with complex numbers
+figure, plot(abs(f3)) %Magnitude plot
+figure, plot(angle(f3)) %Most we do not need but most of the analize application
+figure, plot(abs(fftshift(f3)))  %Zero Centered
 
 %So what is the interpretaion for this?
 %frequency domain representation (cf. time domain). Simplified, peaks on the magnitude plot belongs to the sinusoidal components of the signal.
@@ -29,17 +29,18 @@ figure, plot(abs(fftshift(f3)))
 
 %Exercise 7.
 
-[pks,locs] = findpeaks(abs(f3), 'NPeaks', 3, 'SortStr', 'descend'); %Here we will find the peaks in the abs(f3), we look for 3 peaks
+[pks,locs] = findpeaks(abs(f3), 'NPeaks', 3, 'SortStr', 'descend'); %Here we will find the peaks in the abs(f3), we look for 3 peaks, we look for the 3 most dominant peaks
 %findpeaks = findpeaks(data) returns a vector with the local maxima (peaks) of the input signal vector, data. A local peak is a data sample that is either larger than its two neighboring samples or is equal to Inf. The peaks are output in order of occurrence. Non-Inf signal endpoints are excluded. If a peak is flat, the function returns only the point with the lowest index.
 %[pks,locs] = findpeaks(data) additionally returns the indices at which the peaks occur.
 
 figure, hold on, plot(abs(f3)), plot(locs, pks, 'ro') %So here we just add red circle to the found values
-
+hold off
 %Exercis 8.
 %Take the signal of tone A with its overtones (ex. 2.3.). Filter out the fundamental tone
 
 %How to solve ot?
-%Naive approach: cut out frequency components from the FFT spectrum.
+%Naive approach: cut out frequency components from the FFT spectrum. -->
+%this is not a good approach
 
 %Frequency sampling of the FFT - What is FTT? Fast Fourier Transform
 disp(length(t))
@@ -53,7 +54,9 @@ cut = find(ft >= 430 & ft <= 450);
 
 f8 = f3; 
 f8(cut) = 0; %It 0 out the corresponding values
-f8(end-cut+2) = 0; % We have to do it to be symmetrical
+f8(end-cut+2) = 0; % We have to do it to be symmetrical --> cut+2 because here the first key corresponds to the last N-k+2 because of indexing and that the 0 does not have a pair. Onenote
+
+figure, hold on, plot(abs(f8))
 
 s8 = real(ifft(f8)); % inverse FFT
 %real - real(Z) returns the real part of each

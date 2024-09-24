@@ -45,7 +45,7 @@ n = 8; %number of components
 s3 = 0;
 for k = 1:n
     disp(2^k*2)
-    s3 = s3 + sin(2*pi*fA*t) / 2^k*2;
+    s3 = s3 + sin(2*pi*fA*t) / 2^k*2; %pi*A is a overtone, We divide 2^k-1 to decrease
 end
 
 %Little bit disturbing when running multiple times :D

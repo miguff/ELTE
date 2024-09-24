@@ -9,7 +9,8 @@ sound(y, fs)
 %Step 2 - Stereo -> Mono
 
 %Here we create a Stereo from Mono, by making the of the two same sequence.
-%Since we do that, we will get back one channel with the same value
+%Since we do that, we will get back one channel with the same value. If we
+%only choose the first or second channel, in other times we might lose data
 y = mean(y,2);
 
 % returns the mean along dimension dim. For example, if A is a matrix, then mean(A,2) returns a column vector containing the mean of each row.
@@ -20,7 +21,6 @@ f = fft(y);
 %Step 4 - lower half of FFT - do not really understand why it happens as
 %happens, since it creates a 33075x1 from a 66150x1
 f1 = f(1:end/2); 
-
 %Step 5 - Find the peaks and plot them
 [p,l] = findpeaks(abs(f1), 'NPeaks', 3, 'SortStr', 'descend'); %Finds the first 3 peak
 [l, i] = sort(l); 
@@ -28,7 +28,7 @@ p = p(i); % sorted frequency peaks
 %B = sort(A) sorts the elements of A in ascending order.
 %The l is the original list, that requires needs to be sorted. The output l
 %is the sorted list. The i is the order of the original list
-figure, hold on, plot(abs(f1)), plot(l, p, 'ro')
+figure, hold on, plot(abs(f1)), plot(l, p, 'ro') %If we zoom in, we can see that they are not perfect tones, it has some distortion. So we need to find more peaks potencially
 
 d = floor(min(diff(l))/4); %It filters the width
 
