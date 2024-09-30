@@ -84,8 +84,11 @@ int main()
         else if (BallPos[1] >= HEIGHT - CircleR) {
             // Game Over string
             std::stringstream endstring;
+            std::stringstream exitString;
             endstring << "Game Over!";
+            exitString << "Press 'q' to Exit";
             cv::putText(Background, endstring.str(), cv::Point((HEIGHT /2)  -50, WIDTH / 2), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(255, 255, 255), 1);
+            cv::putText(Background, exitString.str(), cv::Point((HEIGHT / 2) -90 , WIDTH / 1.5), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(255, 255, 255), 1);
         }
         
 

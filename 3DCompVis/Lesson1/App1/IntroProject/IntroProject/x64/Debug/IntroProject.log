@@ -1,2 +1,7 @@
 ﻿  IntroProject.cpp
+C:\Users\msi\Documents\ELTE\3DCompVis\Lesson1\App1\IntroProject\IntroProject\IntroProject.cpp(91,90): warning C4244: 'argument': conversion from 'double' to '_Tp', possible loss of data
+C:\Users\msi\Documents\ELTE\3DCompVis\Lesson1\App1\IntroProject\IntroProject\IntroProject.cpp(91,90): warning C4244:         with
+C:\Users\msi\Documents\ELTE\3DCompVis\Lesson1\App1\IntroProject\IntroProject\IntroProject.cpp(91,90): warning C4244:         [
+C:\Users\msi\Documents\ELTE\3DCompVis\Lesson1\App1\IntroProject\IntroProject\IntroProject.cpp(91,90): warning C4244:             _Tp=int
+C:\Users\msi\Documents\ELTE\3DCompVis\Lesson1\App1\IntroProject\IntroProject\IntroProject.cpp(91,90): warning C4244:         ]
   IntroProject.vcxproj -> C:\Users\msi\Documents\ELTE\3DCompVis\Lesson1\App1\IntroProject\x64\Debug\IntroProject.exe
