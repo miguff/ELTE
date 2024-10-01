@@ -6,7 +6,7 @@
 n = 5;
 Wave1 = 2;
 Wave2 = 2.5;
-SamplingHz = 30
+SamplingHz = 30;
 
 for i = 1:n %Every second
     t = linspace(0, i, SamplingHz*i+1); t(end) = []; %create the base row vector
