@@ -1,0 +1,18 @@
+﻿  RANSAC.cpp
+C:\Users\msi\Documents\ELTE\3DCompVis\Lesson2\RANSAC_complete\RANSAC\RANSAC.cpp(41,18): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\Users\msi\Documents\ELTE\3DCompVis\Lesson2\RANSAC_complete\RANSAC\RANSAC.cpp(46,20): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\msi\Documents\ELTE\3DCompVis\Lesson2\RANSAC_complete\RANSAC\RANSAC.cpp(69,26): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\msi\Documents\ELTE\3DCompVis\Lesson2\RANSAC_complete\RANSAC\RANSAC.cpp(116,13): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\msi\Documents\ELTE\3DCompVis\Lesson2\RANSAC_complete\RANSAC\RANSAC.cpp(120,21): warning C4244: 'return': conversion from 'float' to 'int', possible loss of data
+C:\Users\msi\Documents\ELTE\3DCompVis\Lesson2\RANSAC_complete\RANSAC\RANSAC.cpp(132,18): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\Users\msi\Documents\ELTE\3DCompVis\Lesson2\RANSAC_complete\RANSAC\RANSAC.cpp(133,18): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\Users\msi\Documents\ELTE\3DCompVis\Lesson2\RANSAC_complete\RANSAC\RANSAC.cpp(136,36): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\msi\Documents\ELTE\3DCompVis\Lesson2\RANSAC_complete\RANSAC\RANSAC.cpp(161,108): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\msi\Documents\ELTE\3DCompVis\Lesson2\RANSAC_complete\RANSAC\RANSAC.cpp(161,71): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\Users\msi\Documents\ELTE\3DCompVis\Lesson2\RANSAC_complete\RANSAC\RANSAC.cpp(178,17): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\msi\Documents\ELTE\3DCompVis\Lesson2\RANSAC_complete\RANSAC\RANSAC.cpp(199,12): warning C4244: '=': conversion from 'int' to '_Tp', possible loss of data
+C:\Users\msi\Documents\ELTE\3DCompVis\Lesson2\RANSAC_complete\RANSAC\RANSAC.cpp(199,12): warning C4244:         with
+C:\Users\msi\Documents\ELTE\3DCompVis\Lesson2\RANSAC_complete\RANSAC\RANSAC.cpp(199,12): warning C4244:         [
+C:\Users\msi\Documents\ELTE\3DCompVis\Lesson2\RANSAC_complete\RANSAC\RANSAC.cpp(199,12): warning C4244:             _Tp=float
+C:\Users\msi\Documents\ELTE\3DCompVis\Lesson2\RANSAC_complete\RANSAC\RANSAC.cpp(199,12): warning C4244:         ]
+  RANSAC.vcxproj -> C:\Users\msi\Documents\ELTE\3DCompVis\Lesson2\RANSAC_complete\x64\Debug\RANSAC.exe
