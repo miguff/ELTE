@@ -1,0 +1,27 @@
+﻿  EmptyProject.cpp
+C:\Users\msi\Documents\ELTE\3DCompVis\Lesson3\AffineTrans\EmptyProject\EmptyProject.cpp(56,33): warning C4244: '=': conversion from 'int' to '_Tp', possible loss of data
+C:\Users\msi\Documents\ELTE\3DCompVis\Lesson3\AffineTrans\EmptyProject\EmptyProject.cpp(56,33): warning C4244:         with
+C:\Users\msi\Documents\ELTE\3DCompVis\Lesson3\AffineTrans\EmptyProject\EmptyProject.cpp(56,33): warning C4244:         [
+C:\Users\msi\Documents\ELTE\3DCompVis\Lesson3\AffineTrans\EmptyProject\EmptyProject.cpp(56,33): warning C4244:             _Tp=float
+C:\Users\msi\Documents\ELTE\3DCompVis\Lesson3\AffineTrans\EmptyProject\EmptyProject.cpp(56,33): warning C4244:         ]
+C:\Users\msi\Documents\ELTE\3DCompVis\Lesson3\AffineTrans\EmptyProject\EmptyProject.cpp(57,33): warning C4244: '=': conversion from 'int' to '_Tp', possible loss of data
+C:\Users\msi\Documents\ELTE\3DCompVis\Lesson3\AffineTrans\EmptyProject\EmptyProject.cpp(57,33): warning C4244:         with
+C:\Users\msi\Documents\ELTE\3DCompVis\Lesson3\AffineTrans\EmptyProject\EmptyProject.cpp(57,33): warning C4244:         [
+C:\Users\msi\Documents\ELTE\3DCompVis\Lesson3\AffineTrans\EmptyProject\EmptyProject.cpp(57,33): warning C4244:             _Tp=float
+C:\Users\msi\Documents\ELTE\3DCompVis\Lesson3\AffineTrans\EmptyProject\EmptyProject.cpp(57,33): warning C4244:         ]
+C:\Users\msi\Documents\ELTE\3DCompVis\Lesson3\AffineTrans\EmptyProject\EmptyProject.cpp(61,22): warning C4244: 'initializing': conversion from '_Tp' to 'int', possible loss of data
+C:\Users\msi\Documents\ELTE\3DCompVis\Lesson3\AffineTrans\EmptyProject\EmptyProject.cpp(61,22): warning C4244:         with
+C:\Users\msi\Documents\ELTE\3DCompVis\Lesson3\AffineTrans\EmptyProject\EmptyProject.cpp(61,22): warning C4244:         [
+C:\Users\msi\Documents\ELTE\3DCompVis\Lesson3\AffineTrans\EmptyProject\EmptyProject.cpp(61,22): warning C4244:             _Tp=float
+C:\Users\msi\Documents\ELTE\3DCompVis\Lesson3\AffineTrans\EmptyProject\EmptyProject.cpp(61,22): warning C4244:         ]
+C:\Users\msi\Documents\ELTE\3DCompVis\Lesson3\AffineTrans\EmptyProject\EmptyProject.cpp(62,22): warning C4244: 'initializing': conversion from '_Tp' to 'int', possible loss of data
+C:\Users\msi\Documents\ELTE\3DCompVis\Lesson3\AffineTrans\EmptyProject\EmptyProject.cpp(62,22): warning C4244:         with
+C:\Users\msi\Documents\ELTE\3DCompVis\Lesson3\AffineTrans\EmptyProject\EmptyProject.cpp(62,22): warning C4244:         [
+C:\Users\msi\Documents\ELTE\3DCompVis\Lesson3\AffineTrans\EmptyProject\EmptyProject.cpp(62,22): warning C4244:             _Tp=float
+C:\Users\msi\Documents\ELTE\3DCompVis\Lesson3\AffineTrans\EmptyProject\EmptyProject.cpp(62,22): warning C4244:         ]
+C:\Users\msi\Documents\ELTE\3DCompVis\Lesson3\AffineTrans\EmptyProject\EmptyProject.cpp(104,29): warning C4305: 'argument': truncation from 'double' to 'float'
+  Generating code
+  Previous IPDB not found, fall back to full compilation.
+  All 102 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Finished generating code
+  EmptyProject.vcxproj -> C:\Users\msi\Documents\ELTE\3DCompVis\Lesson3\AffineTrans\x64\Release\EmptyProject.exe
