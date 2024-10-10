@@ -241,7 +241,7 @@ def main():
 
     Points = np.column_stack((cirlex, Cirley))
     
-    Ransacgen = RANSAC(Points, 1000, parameter=1.5, error_model=0)
+    Ransacgen = RANSAC(Points, 100, parameter=1.5, error_model=1)
     h,k,r = Ransacgen.fit()
 
     theta = np.linspace(0, 2 * np.pi, 100)
