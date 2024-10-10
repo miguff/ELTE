@@ -1,5 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import random
+import pandas as pd
 
 
 class GenerateCircle:
@@ -28,17 +30,44 @@ class GenerateCircle:
     
 
 class RANSAC:
-    def __init__(self, Points):
+    def __init__(self, Points, numberofiter, parameter = 5):
         self.Points = Points
+        self.numberofiter = numberofiter
+        self.h = None
+        self.k = None
+        self.r = None
+        self.insidepoints = 0
+        self.parameter = parameter
 
+    def fit(self):
+        for i in range(self.numberofiter):
+            print(f"{i+1} iteration")
+            newh, newk, newr = self.fitCircle()
+            newinsidepoints = self.Error(newh, newk, newr)
+            print(f"New inside points:{newinsidepoints} \nold inside points: {self.insidepoints}")
+            if newinsidepoints > self.insidepoints:
+                self.insidepoints = newinsidepoints
+                self.h = newh
+                self.k = newk
+                self.r = newr
+        return self.h, self.k, self.r
 
-    
+    def Error(self, h, k, r):
+        greaterR = r + self.parameter
+        lesserR = r - self.parameter
+        Pointsdf = pd.DataFrame(self.Points, columns=["datax", "datay"])
+        Pointsdf["Inside Point"] = Pointsdf.apply(lambda row: (row['datax']-h)**2 + (row['datay']-k)**2 < greaterR**2 and
+                                                               (row['datax']-h)**2 + (row['datay']-k)**2 > lesserR**2 , axis=1)
+        insidepoints = Pointsdf["Inside Point"].sum()
+        return insidepoints
+
 
     def fitCircle(self):
 
-        x1, y1 = self.Points[0]
-        x2, y2 = self.Points[60]
-        x3, y3 = self.Points[120]
+        random1, random2, random3 = random.sample(range(0, len(self.Points)), 3)
+        x1, y1 = self.Points[random1]
+        x2, y2 = self.Points[random2]
+        x3, y3 = self.Points[random3]
 
 
         # Set up the matrices
@@ -72,8 +101,8 @@ def main():
 
     Points = np.column_stack((cirlex, Cirley))
     
-    Ransacgen = RANSAC(Points)
-    h,k,r = Ransacgen.fitCircle()
+    Ransacgen = RANSAC(Points, 100, parameter=1.5)
+    h,k,r = Ransacgen.fit()
 
     theta = np.linspace(0, 2 * np.pi, 100)
     
@@ -92,6 +121,7 @@ def main():
     plt.axis('equal')  # Equal scaling
     plt.legend()
     plt.show()
+
 
 
 """
