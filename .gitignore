@@ -9,3 +9,5 @@ DeepNetworkDevelompent/Assignment1/Object
 *.wav
 *jpg
 *.pdf
+/ImageandSignal/Assignment/bead.m
+/ImageandSignal/Assignment/audio_30_analysis.m

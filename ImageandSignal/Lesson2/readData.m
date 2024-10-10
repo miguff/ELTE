@@ -21,8 +21,9 @@ y = mean(y,2);
 %Step 3 - We do a Fast Fourier Transformations
 f = fft(y);
 
-%Step 4 - lower half of FFT - do not really understand why it happens as
-%happens, since it creates a 33075x1 from a 66150x1
+%Step 4 - lower half of FFT - because Fuorier transformation is symmetric,
+%so we just need the first half
+% it creates a 33075x1 from a 66150x1
 f1 = f(1:end/2); 
 %Step 5 - Find the peaks and plot them
 [p,l] = findpeaks(abs(f1), 'NPeaks', 3, 'SortStr', 'descend'); %Finds the first 3 peak, it is sorted by PeakSize
