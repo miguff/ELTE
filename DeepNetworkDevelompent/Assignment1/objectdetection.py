@@ -10,7 +10,12 @@ import random
 from matplotlib.patches import Rectangle
 import torch.optim as optim
 from tqdm import tqdm
-from torchvision.ops import generalized_box_iou_loss
+from sklearn.metrics import precision_score, recall_score, average_precision_score
+from sklearn.preprocessing import label_binarize
+from sklearn.metrics import roc_auc_score
+import cv2
+import numpy as np
+import sys
 
 
 
@@ -177,10 +182,24 @@ class CustomObjectDetectionModel(nn.Module):
         optimizer = optim.AdamW(self.parameters(), lr=lr)
         classification_loss_fn = nn.CrossEntropyLoss()
         bbox_loss_fn = nn.SmoothL1Loss()
+
+        train_losses = []
+        val_losses = []
+        train_classification_losses = []
+        train_regression_losses = []
+
         for epoch in range(num_epochs):
-            self.train()  # Set the model to training mode
+
             running_loss = 0.0
+            train_classification_loss = 0.0
+            train_regression_loss = 0.0
+            self.train()  # Set the model to training mode
             total_accuracy = 0.0
+            
+
+            all_preds = []
+            all_labels = []
+            all_t_iou = []
 
             # Iterate over the training data
             for batch in tqdm(train_loader):
@@ -194,17 +213,22 @@ class CustomObjectDetectionModel(nn.Module):
                 # Forward pass
                 class_logits, bbox_regression = self(images)
 
+                # Calculate losses
+                classification_loss = classification_loss_fn(class_logits, labels)
                 # Remove extra dimension from bbox if present
                 bboxes = torch.squeeze(bboxes, dim=1)
 
-                # Calculate losses
-                classification_loss = classification_loss_fn(class_logits, labels)
+                
                 
                 #bbox_loss = bbox_loss_fn(bbox_regression, bboxes)
-                bbox_loss = bbox_loss_fn(bbox_regression, bboxes)
+                #bbox_loss = bbox_loss_fn(bbox_regression, bboxes)
+
+                regression_loss = bbox_loss_fn(bbox_regression, bboxes)
+                iou_loss_value = iou_loss(bbox_regression, bboxes)
 
                 # Total loss is a weighted sum of classification and bbox regression loss
-                loss = classification_loss + bbox_loss
+                total_regression_loss = 0.1 * regression_loss + 0.9 * iou_loss_value
+                loss = classification_loss*0.1 + total_regression_loss*0.9
 
                 # Backward pass and optimize
                 loss.backward()
@@ -215,13 +239,22 @@ class CustomObjectDetectionModel(nn.Module):
                 # Calculate accuracy (this function should be defined elsewhere)
                 batch_accuracy = self.calculate_accuracy(class_logits, labels)
                 total_accuracy += batch_accuracy
-            print(intersection_over_union(bbox_regression, bboxes))
+
+                running_loss += loss.item() * images.size(0)
+                train_classification_loss += classification_loss.item() * images.size(0)
+                train_regression_loss += regression_loss.item() * images.size(0)
+
+                preds = torch.argmax(class_logits, dim=1)
+                all_preds.extend(preds.cpu().numpy())
+                all_labels.extend(labels.cpu().numpy())
+                all_t_iou.append(iou_loss_value.cpu().detach().numpy())
+            
             avg_loss = running_loss / len(train_loader)
             avg_accuracy = total_accuracy / len(train_loader)
 
             print(f"Epoch [{epoch+1}/{num_epochs}], Loss: {avg_loss:.4f}, Accuracy: {avg_accuracy*100:.2f}%")
             self.validating(val_loader, device)
-            self.predict(r"root\dataset\test\images\all_images00107.jpg", device)
+            #self.predict(r"root\dataset\test\images\all_images00107.jpg", device)
 
     def calculate_accuracy(self, class_logits, labels):
         # Assuming a simple accuracy function: percentage of correct classifications
@@ -255,7 +288,7 @@ class CustomObjectDetectionModel(nn.Module):
         avg_accuracy = total_accuracy / len(val_loader)
         print(f"Validation Loss: {avg_loss:.4f}, Validation Accuracy: {avg_accuracy*100:.2f}%")
     
-    def predict(self, img_path, device='cpu'):
+    def predict(self, img_path:str, device='cpu'):
         image  = Image.open(img_path).convert('RGB')
         transformsaug = transforms.ToTensor()
         imagetobeused = transformsaug(image).unsqueeze(0).to(device)
@@ -282,9 +315,10 @@ class CustomObjectDetectionModel(nn.Module):
         x_max = x_center + (width/2)
         y_max = y_center + (height/2)
 
-        
-        label_name = r"root\dataset\test\labels\all_images00107.txt"
-       
+        label_name = img_path.replace("/images", "/labels")  
+        label_name = label_name.replace(".jpg", ".txt")      
+
+        label_name = r"root\dataset\test\labels\all_images02764.txt"
 
         with open(label_name, 'r') as YoloData:
             line = YoloData.readline().strip()
@@ -327,7 +361,7 @@ class CustomObjectDetectionModel(nn.Module):
             iou = intersection_area / (union_area + 1e-6)  # Add small epsilon to avoid division by zero
         else:
             iou = 0
-        print(iou)
+        # print(iou)
 
 
         fig, ax = plt.subplots(1)
@@ -335,11 +369,16 @@ class CustomObjectDetectionModel(nn.Module):
         rect = Rectangle((x_min, y_min), width, height, linewidth=2, edgecolor='r', facecolor='none')
         rectorig = Rectangle((x_minorig, y_minorig), widthorig, heightorig, linewidth=2, edgecolor='g', facecolor='none')
 
-# Add the patch to the Axes
+#Add the patch to the Axes
         ax.add_patch(rect)
         ax.add_patch(rectorig)
         plt.title(f"Class: {predicted_class}")
         plt.show()
+
+        return {
+            'class_id': predicted_class,
+            'bbox': [x_min, y_min, x_max, y_max]
+        }
             
 
 
@@ -363,67 +402,166 @@ def main():
     #model preparation
     num_classes = 3  # Update based on your number of classes
     model = CustomObjectDetectionModel(num_classes)
-    model.trainfuction(train_loader,val_loader, num_epochs=20, device=device)
-    torch.save(model.state_dict(), 'model_weights_new_coordinate2.pth')
-    model.predict(r"root\dataset\test\images\all_images00107.jpg", device)
+    model.trainfuction(train_loader,val_loader, num_epochs=40, device=device)
+    torch.save(model.state_dict(), 'model_weights_new_coordinate6.pth')
+
+
+    # datapath = r"root\dataset\test\images"
+    # imagespath = os.listdir(datapath)
+    # print(imagespath)
+
+    model.predict(r"root\dataset\test\images\all_images02764.jpg", device)
+    sys.exit()
+
+    model = CustomObjectDetectionModel(3)
+    model.load_state_dict(torch.load('model_weights_new_coordinate2.pth'))
+
+    TestPath = "root\\dataset\\test\\images"
+    TestPathBB = "root\\dataset\\test\\labels"
+
+    TestImages = os.listdir(TestPath)
+    TestBB = os.listdir(TestPathBB)
+# Move model to appropriate device
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    model = model.to(device)
+
+# Set the model to evaluation mode
+    model.eval()
+
+
+    correctimages = 0
+
+    all_targets = []
+    all_predictions = []
+# Predict on a new image
+    for i in range(len(TestImages)):
+        image_path = f'root/dataset/test/images/{TestImages[i]}'
+
+    #This is YOLO format
+        with open(f'root/dataset/test/labels/{TestBB[i]}', 'r') as YoloData:
+            line = YoloData.readline().strip()
+            values = line.split()
+            realclass = int(values[0])
     
 
-def intersection_over_union(boxes_preds, boxes_labels):
+        prediction = model.predict(image_path, device=device)
+    
+        all_predictions.append(prediction["class_id"])
+        all_targets.append(realclass)
+        if prediction["class_id"] == realclass:
+            correctimages += 1
+    # Output the prediction
+    precision = precision_score(all_targets, all_predictions, average='macro', zero_division=1)
+    recall = recall_score(all_targets, all_predictions, average='macro')
+    all_targets_binary = label_binarize(all_targets, classes=np.unique(all_targets))
+    all_predictions_binary = label_binarize(all_predictions, classes=np.unique(all_predictions))
+    mAP = roc_auc_score(all_targets_binary, all_predictions_binary, average='macro', multi_class='ovr')
+    testaccuracy = correctimages/len(TestImages)
+    print(f"Accuracy on test set: {testaccuracy:.2f} ")
+    print(f'Precision: {precision:.4f}, Recall: {recall:.4f}, mAP: {mAP:.4f}')
+
+
+    for i in range(5):
+            image = random.choice(TestImages)
+            image_path = f'root/dataset/test/images/{image}'
+            imagecv2 = cv2.imread(image_path)
+            prediction = model.predict(image_path, device=device)
+            x_center, y_center, width, height = prediction['bbox']
+
+            # x_center = x_center*imagecv2.shape[0]
+            # y_center = y_center*imagecv2.shape[1]
+            # width = width*imagecv2.shape[0]
+            # height = height*imagecv2.shape[1] 
+
+            x_min = x_center - (width/2)
+            y_min = y_center - (height/2)
+    
+            fig, ax = plt.subplots(1)
+            ax.imshow(imagecv2)
+            rect = Rectangle((x_min, y_min), width, height, linewidth=2, edgecolor='r', facecolor='none')
+
+    # Add the patch to the Axes
+            ax.add_patch(rect)
+            plt.title(f"Sample: {image}, Class: {prediction['class_id']}")
+            plt.show()
+
+    
+
+def iou_loss(pred_boxes, true_boxes, img_width=640, img_height=640):
     """
-    Calculate Intersection over Union (IoU) for bounding boxes.
-    
-    Args:
-    - boxes_preds (tensor): Predicted bounding boxes (B, 4) -> (x_center, y_center, width, height)
-    - boxes_labels (tensor): Ground truth bounding boxes (B, 4) -> (x_center, y_center, width, height)
-
-    Returns:
-    - IoU (tensor): IoU for each example in the batch.
+    IoU Loss: 1 - IoU (since IoU is a value between 0 and 1, minimizing 1 - IoU will maximize IoU).
+    Both pred_boxes and true_boxes should be in absolute coordinates [xmin, ymin, xmax, ymax].
     """
-    # Convert from center (x, y, w, h) to corners (x1, y1, x2, y2)
-    box1_x1 = boxes_preds[..., 0] - boxes_preds[..., 2] / 2
-    box1_y1 = boxes_preds[..., 1] - boxes_preds[..., 3] / 2
-    box1_x2 = boxes_preds[..., 0] + boxes_preds[..., 2] / 2
-    box1_y2 = boxes_preds[..., 1] + boxes_preds[..., 3] / 2
-    
-    box2_x1 = boxes_labels[..., 0] - boxes_labels[..., 2] / 2
-    box2_y1 = boxes_labels[..., 1] - boxes_labels[..., 3] / 2
-    box2_x2 = boxes_labels[..., 0] + boxes_labels[..., 2] / 2
-    box2_y2 = boxes_labels[..., 1] + boxes_labels[..., 3] / 2
+    # Create copies of the boxes to avoid in-place modification
+    pred_boxes_scaled = pred_boxes.clone()
+    true_boxes_scaled = true_boxes.clone()
 
-    # Find the intersection box
-    x1 = torch.max(box1_x1, box2_x1)
-    y1 = torch.max(box1_y1, box2_y1)
-    x2 = torch.min(box1_x2, box2_x2)
-    y2 = torch.min(box1_y2, box2_y2)
+    # Convert normalized bounding boxes to absolute pixel values (if applicable)
+    pred_boxes_scaled[:, [0, 2]] *= img_width  # Convert x coordinates
+    pred_boxes_scaled[:, [1, 3]] *= img_height  # Convert y coordinates
+    true_boxes_scaled[:, [0, 2]] *= img_width  # Convert x coordinates
+    true_boxes_scaled[:, [1, 3]] *= img_height  # Convert y coordinates
 
-    # Clamp the values at 0 to prevent negative areas
-    intersection = torch.clamp(x2 - x1, min=0) * torch.clamp(y2 - y1, min=0)
-    
-    # Calculate the area of both the prediction and ground-truth boxes
-    box1_area = (box1_x2 - box1_x1) * (box1_y2 - box1_y1)
-    box2_area = (box2_x2 - box2_x1) * (box2_y2 - box2_y1)
+    # Ensure tensor shapes are correct before IoU calculation
+    #print(f"Pred Boxes Shape: {pred_boxes_scaled.shape}, True Boxes Shape: {true_boxes_scaled.shape}")
+    #print(f"Predicted Boxes: {pred_boxes_scaled}")
+    #print(f"True Boxes: {true_boxes_scaled}")
 
-    # Union area
-    union = box1_area + box2_area - intersection
+    # Convert boxes from [xmin, ymin, width, height] to [xmin, ymin, xmax, ymax]
+    def convert_to_corners(boxes):
+        """
+        Convert boxes from [xmin, ymin, width, height] to [xmin, ymin, xmax, ymax].
+        """
+        boxes[:, 2] = boxes[:, 0] + boxes[:, 2]  # xmax = xmin + width
+        boxes[:, 3] = boxes[:, 1] + boxes[:, 3]  # ymax = ymin + height
+        return boxes
 
-    # IoU
-    iou = intersection / (union + 1e-6)  # Add a small value to avoid division by zero
-    return iou
+    # Apply the conversion to both predicted and true boxes
+    pred_boxes_converted = convert_to_corners(pred_boxes_scaled)
+    true_boxes_converted = convert_to_corners(true_boxes_scaled)
 
+    # Manual IoU computation for each box pair
+    def calculate_iou(box1, box2):
+        """
+        Manually calculates the IoU (Intersection over Union) between two bounding boxes.
+        Each box is represented by [xmin, ymin, xmax, ymax].
+        """
+        # Determine the coordinates of the intersection rectangle
+        inter_xmin = max(box1[0], box2[0])
+        inter_ymin = max(box1[1], box2[1])
+        inter_xmax = min(box1[2], box2[2])
+        inter_ymax = min(box1[3], box2[3])
 
-def iou_loss(pred_boxes, target_boxes):
-    """
-    Calculate IoU loss.
-    
-    Args:
-    - pred_boxes (tensor): Predicted bounding boxes (B, 4) -> (x_center, y_center, width, height)
-    - target_boxes (tensor): Ground truth bounding boxes (B, 4) -> (x_center, y_center, width, height)
+        # Compute the area of the intersection rectangle
+        inter_width = max(inter_xmax - inter_xmin, 0)
+        inter_height = max(inter_ymax - inter_ymin, 0)
+        inter_area = inter_width * inter_height
 
-    Returns:
-    - IoU loss (tensor): The IoU loss for each prediction.
-    """
-    iou = intersection_over_union(pred_boxes, target_boxes)
-    return (1 - iou).min()  # IoU Loss is 1 - IoU
+        # Compute the area of both the predicted and true rectangles
+        box1_area = (box1[2] - box1[0]) * (box1[3] - box1[1])
+        box2_area = (box2[2] - box2[0]) * (box2[3] - box2[1])
+
+        # Compute the union area
+        union_area = box1_area + box2_area - inter_area
+
+        # Compute IoU
+        iou = inter_area / union_area if union_area > 0 else 0.0
+        return iou
+
+    # Loop through each predicted and true box to compute the IoU
+    ious = []
+    for i in range(len(pred_boxes_converted)):
+        pred_box = pred_boxes_converted[i]
+        true_box = true_boxes_converted[i]
+        iou = calculate_iou(pred_box, true_box)
+        ious.append(iou)
+        #print(f"IoU for predicted box {i}: {iou:.4f}")
+
+    # Convert list of IoUs to a tensor and compute the mean for IoU loss
+    iou_tensor = torch.tensor(ious, device=pred_boxes.device)
+    iou_loss_value = 1 - iou_tensor.mean()
+
+    return iou_loss_value
 
 
 
