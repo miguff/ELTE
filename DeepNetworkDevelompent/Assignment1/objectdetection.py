@@ -183,11 +183,6 @@ class CustomObjectDetectionModel(nn.Module):
         classification_loss_fn = nn.CrossEntropyLoss()
         bbox_loss_fn = nn.SmoothL1Loss()
 
-        train_losses = []
-        val_losses = []
-        train_classification_losses = []
-        train_regression_losses = []
-
         for epoch in range(num_epochs):
 
             running_loss = 0.0
@@ -218,17 +213,12 @@ class CustomObjectDetectionModel(nn.Module):
                 # Remove extra dimension from bbox if present
                 bboxes = torch.squeeze(bboxes, dim=1)
 
-                
-                
-                #bbox_loss = bbox_loss_fn(bbox_regression, bboxes)
-                #bbox_loss = bbox_loss_fn(bbox_regression, bboxes)
-
                 regression_loss = bbox_loss_fn(bbox_regression, bboxes)
                 iou_loss_value = iou_loss(bbox_regression, bboxes)
 
                 # Total loss is a weighted sum of classification and bbox regression loss
-                total_regression_loss = 0.1 * regression_loss + 0.9 * iou_loss_value
-                loss = classification_loss*0.1 + total_regression_loss*0.9
+                total_regression_loss = 0.05 * regression_loss + 0.95 * iou_loss_value
+                loss = classification_loss*0.05 + total_regression_loss*0.95
 
                 # Backward pass and optimize
                 loss.backward()
@@ -251,6 +241,7 @@ class CustomObjectDetectionModel(nn.Module):
             
             avg_loss = running_loss / len(train_loader)
             avg_accuracy = total_accuracy / len(train_loader)
+            
 
             print(f"Epoch [{epoch+1}/{num_epochs}], Loss: {avg_loss:.4f}, Accuracy: {avg_accuracy*100:.2f}%")
             self.validating(val_loader, device)
@@ -318,7 +309,7 @@ class CustomObjectDetectionModel(nn.Module):
         label_name = img_path.replace("/images", "/labels")  
         label_name = label_name.replace(".jpg", ".txt")      
 
-        label_name = r"root\dataset\test\labels\all_images02764.txt"
+        #label_name = r"root\dataset\test\labels\all_images02764.txt"
 
         with open(label_name, 'r') as YoloData:
             line = YoloData.readline().strip()
@@ -364,16 +355,16 @@ class CustomObjectDetectionModel(nn.Module):
         # print(iou)
 
 
-        fig, ax = plt.subplots(1)
-        ax.imshow(image)
-        rect = Rectangle((x_min, y_min), width, height, linewidth=2, edgecolor='r', facecolor='none')
-        rectorig = Rectangle((x_minorig, y_minorig), widthorig, heightorig, linewidth=2, edgecolor='g', facecolor='none')
+        #fig, ax = plt.subplots(1)
+       # ax.imshow(image)
+        #rect = Rectangle((x_min, y_min), width, height, linewidth=2, edgecolor='r', facecolor='none')
+        #rectorig = Rectangle((x_minorig, y_minorig), widthorig, heightorig, linewidth=2, edgecolor='g', facecolor='none')
 
 #Add the patch to the Axes
-        ax.add_patch(rect)
-        ax.add_patch(rectorig)
-        plt.title(f"Class: {predicted_class}")
-        plt.show()
+        #ax.add_patch(rect)
+        #ax.add_patch(rectorig)
+        #plt.title(f"Class: {predicted_class}")
+        #plt.show()
 
         return {
             'class_id': predicted_class,
@@ -392,29 +383,24 @@ def main():
     ])
 
     train_dataset = ImageDataset(root_dir='root\\dataset\\train', transform=transform)
-    train_loader = DataLoader(train_dataset, batch_size=16, shuffle=True, pin_memory=False)
+    train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True, pin_memory=False)
 
     val_dataset = ImageDataset(root_dir='root\\dataset\\val', transform=transform)
-    val_loader = DataLoader(val_dataset, batch_size=16, shuffle=False, pin_memory=False)
+    val_loader = DataLoader(val_dataset, batch_size=32, shuffle=False, pin_memory=False)
 
     #visualize_dataset(train_dataset, 2)
 
     #model preparation
     num_classes = 3  # Update based on your number of classes
     model = CustomObjectDetectionModel(num_classes)
-    model.trainfuction(train_loader,val_loader, num_epochs=40, device=device)
+    model.trainfuction(train_loader,val_loader, num_epochs=10, device=device)
     torch.save(model.state_dict(), 'model_weights_new_coordinate6.pth')
 
+    #model.predict(r"root\dataset\test\images\all_images02764.jpg", device)
 
-    # datapath = r"root\dataset\test\images"
-    # imagespath = os.listdir(datapath)
-    # print(imagespath)
 
-    model.predict(r"root\dataset\test\images\all_images02764.jpg", device)
-    sys.exit()
-
-    model = CustomObjectDetectionModel(3)
-    model.load_state_dict(torch.load('model_weights_new_coordinate2.pth'))
+    # model = CustomObjectDetectionModel(3)
+    # model.load_state_dict(torch.load('model_weights_new_coordinate2.pth'))
 
     TestPath = "root\\dataset\\test\\images"
     TestPathBB = "root\\dataset\\test\\labels"
@@ -445,7 +431,6 @@ def main():
     
 
         prediction = model.predict(image_path, device=device)
-    
         all_predictions.append(prediction["class_id"])
         all_targets.append(realclass)
         if prediction["class_id"] == realclass:
@@ -487,7 +472,7 @@ def main():
 
     
 
-def iou_loss(pred_boxes, true_boxes, img_width=640, img_height=640):
+def iou_loss(pred_boxes, true_boxes, img_width=320, img_height=320):
     """
     IoU Loss: 1 - IoU (since IoU is a value between 0 and 1, minimizing 1 - IoU will maximize IoU).
     Both pred_boxes and true_boxes should be in absolute coordinates [xmin, ymin, xmax, ymax].
@@ -520,7 +505,6 @@ def iou_loss(pred_boxes, true_boxes, img_width=640, img_height=640):
     pred_boxes_converted = convert_to_corners(pred_boxes_scaled)
     true_boxes_converted = convert_to_corners(true_boxes_scaled)
 
-    # Manual IoU computation for each box pair
     def calculate_iou(box1, box2):
         """
         Manually calculates the IoU (Intersection over Union) between two bounding boxes.
