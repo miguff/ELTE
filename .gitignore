@@ -15,3 +15,7 @@ DeepNetworkDevelompent/Assignment1/root
 /ImageandSignal/Assignment/audio_30_analysis.m
 *.png
 *.json
+*.txt
+*.xml
+*.yaml
+/ARI/KITTI
