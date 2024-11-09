@@ -1,0 +1,102 @@
+import cv2
+import random
+import numpy as np
+from sympy.matrices import Matrix
+import pandas as pd
+
+def main():
+    image = cv2.imread("ELTECar3.png", 0)
+
+    lsd = cv2.createLineSegmentDetector(0)
+    lines = lsd.detect(image)[0]
+    linend = lines[:,0,:]
+    lambdavalue = 10
+    inliners = []
+    bestx = None
+    besty = None
+
+    for j in range(5):
+        insideinliner = []
+        line1, line2 = random.sample(list(lines),2)
+        candidatepoint = intersection(line1, line2)
+        intersectx, intersecty = candidatepoint
+        
+        for i in linend:
+            x1, y1, x2, y2 = i.flatten()
+            m = (y2-y1)/(x2-x1)
+            b = y1 - m*x1
+            ycap = intersectx*m + b
+            ydiff = ycap - intersecty
+            if abs(ydiff) < lambdavalue:
+                insideinliner.append(i)
+        print(f"Number of inliners in the {j}. Step: {len(insideinliner)}.")
+        if len(insideinliner) > len(inliners):
+            print(f"Now I change the insiders.")
+            inliners = insideinliner
+            bestx = intersectx
+            besty = intersecty
+    print(f"Lenghts of the final inliners: {len(inliners)}")    
+    inliners = np.array(inliners).reshape(-1, 1, 4)
+  
+
+    drawn_img = lsd.drawSegments(image, inliners)
+    
+    print(drawn_img.shape)
+    print(besty, bestx)
+
+
+    black = np.zeros(drawn_img.shape)
+    drawn_img = np.concatenate((black, drawn_img), axis=1)
+
+    drawn_img = cv2.circle(drawn_img, (bestx,besty), radius=10, color=(0, 0, 255), thickness=-1)
+    # drawn_img = cv2.line(drawn_img, (bestx, besty), (int(line1[0][0]), int(line1[0][1])), (0, 255, 0), 2)
+    # drawn_img = cv2.line(drawn_img, (bestx, besty), (int(line2[0][0]), int(line2[0][1])), (0, 255, 0), 2)
+    #drawn_img = lsd.drawSegments(drawn_img, lines)
+    
+    cv2.imwrite("teszt.jpg", drawn_img)
+    cv2.imshow("LSD", drawn_img)
+
+
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
+
+
+def intersection(line1, line2):
+
+    x1, y1, x2, y2 = line1.flatten()
+    x3, y3, x4, y4 = line2.flatten()
+
+
+    #Parameters of line1
+    A1 = y2 - y1
+    B1 = x1 - x2
+
+    #Plug in one point of the line
+    C1 = A1*x1 + B1*y1
+
+    #Parameters of line2
+    A2 = y4 - y3
+    B2 = x3 - x4
+
+    #Plug in one point of the line
+    C2 = A2 * x3 + B2 * y3
+
+    determinant = A1*B2 - B1*A2
+    if determinant == 0:
+        print("This line are paralell")
+    else:
+        #Using the Reduced Row Echelon Form
+        AugmentedMatrix = Matrix([[A1, B1, C1],
+          [A2, B2, C2]])
+    
+        rref_matrix, _ = AugmentedMatrix.rref()
+
+        x = int(rref_matrix[0, 2])
+        y = int(rref_matrix[1, 2])
+    
+    return x, y
+    
+
+if __name__ == "__main__":
+    main()
