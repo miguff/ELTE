@@ -12,7 +12,7 @@ def main():
     It detects lines in an image, uses RANSAC to estimate the best intersection point,
     and draws the result on the image, including an optimized intersection point.
     """
-    name = "ELTECar3.png"
+    name = "ELTECar4.png"
     image = cv2.imread(name, 0)
     lsd = cv2.createLineSegmentDetector(0)
     lines = lsd.detect(image)[0]

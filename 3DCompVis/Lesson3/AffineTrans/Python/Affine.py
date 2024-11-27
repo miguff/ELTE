@@ -1,7 +1,7 @@
 import numpy as np
 import cv2
 import tkinter as tk
-
+import sys
 
 # Global transformation parameters
 angle = 0.0
