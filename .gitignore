@@ -40,3 +40,14 @@ DeepNetworkDevelompent/Assignment2/runs/flick/events.out.tfevents.1732268014.DES
 DeepNetworkDevelompent/Assignment2/runs/flick/events.out.tfevents.1732267833.DESKTOP-FST6ME6.24852.0
 3DCompVis/Lesson3/AffineTrans/.vs/EmptyProject/v17/ipch/AutoPCH/4a7a2b0de8e4b49b/EMPTYPROJECT.ipch
 3DCompVis/Lesson3/AffineTrans/.vs/EmptyProject/v17/Browse.VC.db
+ImageandSignal/Assignment3/__pycache__/detection.cpython-310.pyc
+ImageandSignal/Assignment3/best.onnx
+ImageandSignal/Assignment3/LicensePlateDetection/LicensePlate/events.out.tfevents.1732959751.DESKTOP-FST6ME6.18508.0
+ImageandSignal/Assignment3/LicensePlateDetection/LicensePlate5/events.out.tfevents.1732960031.DESKTOP-FST6ME6.19260.0
+ImageandSignal/Assignment3/LicensePlateDetection/LicensePlate5/results.csv
+ImageandSignal/Assignment3/LicensePlateDetection/LicensePlate5/weights/best.onnx
+ImageandSignal/Assignment3/LicensePlateDetection/LicensePlate5/weights/best.pt
+ImageandSignal/Assignment3/LicensePlateDetection/LicensePlate5/weights/last.pt
+ImageandSignal/Assignment3/python/yolo11n.pt
+ImageandSignal/Assignment3/train/labels.cache
+ImageandSignal/Assignment3/valid/labels.cache
