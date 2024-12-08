@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Load the image with black borders
-image_with_borders_path = "final_stitched_image_5859.png"  # Replace with your file path
+image_with_borders_path = "improved_manual_homography6061.png"  # Replace with your file path
 image_with_borders = cv2.imread(image_with_borders_path)
 
 # Convert to grayscale for thresholding

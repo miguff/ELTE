@@ -509,7 +509,7 @@ def main():
     #         save_model(model,epoch, embed_size, vocab_size, attention_dim, encoder_dim, decoder_dim, train_loss, val_loss_list)
 
 
-    checkpoint = torch.load('attention_model_state_13.pth')
+    checkpoint = torch.load(r'models3\attention_model_state_13.pth')
     model = EncoderDecoder(embed_size=checkpoint['embed_size'], vocab_size=checkpoint['vocab_size'], 
                 attention_dim=checkpoint['attention_dim'], encoder_dim=checkpoint['encoder_dim'], 
                 decoder_dim=checkpoint['decoder_dim']).to(device)
@@ -523,27 +523,29 @@ def main():
     print(f"BLEU-2: {bleu2:.4f}")
     print(f"BLEU-3: {bleu3:.4f}")
 
-    # train_loss = checkpoint['train_loss']
-    # val_loss = checkpoint['val_loss']
+    train_loss = checkpoint['train_loss']
+    val_loss = checkpoint['val_loss']
 
-    # plt.figure(figsize=(10, 6))
-    # plt.plot(train_loss, label='Training Loss')
-    # plt.plot(val_loss, label='Validation Loss')
-    # plt.xlabel('Epochs')
-    # plt.ylabel('Loss')
-    # plt.title('Training and Validation Loss Over Epochs')
-    # plt.legend()
-    # plt.grid()
-    # plt.show()
+    
 
-    # dataiter = iter(test_loader)
-    # images,_ = next(dataiter)
+    plt.figure(figsize=(10, 6))
+    plt.plot(train_loss, label='Training Loss')
+    plt.plot(val_loss, label='Validation Loss')
+    plt.xlabel('Epochs')
+    plt.ylabel('Loss')
+    plt.title('Training and Validation Loss Over Epochs')
+    plt.legend()
+    plt.grid()
+    plt.show()
 
-    # img = images[0].detach().clone()
-    # img1 = images[0].detach().clone()
-    # caps,alphas = get_caps_from(img.unsqueeze(0), model, dataset)
+    dataiter = iter(test_loader)
+    images,_ = next(dataiter)
 
-    # plot_attention(img1, caps, alphas)
+    img = images[0].detach().clone()
+    img1 = images[0].detach().clone()
+    caps,alphas = get_caps_from(img.unsqueeze(0), model, dataset)
+
+    plot_attention(img1, caps, alphas)
 
     model = VisionEncoderDecoderModel.from_pretrained("nlpconnect/vit-gpt2-image-captioning").to(device)
     tokenizer = AutoTokenizer.from_pretrained("gpt2")
@@ -593,11 +595,6 @@ def main():
     print(f"BLEU-3: {bleu3:.4f}")
 
 
-
-def preprocess_images(images, feature_extractor):
-    # Transform images to the required format
-    pixel_values = feature_extractor(images=list(images), return_tensors="pt").pixel_values
-    return pixel_values.to(device)
 import sys
 #generate caption
 def get_caps_from(features_tensors, model, dataset):
