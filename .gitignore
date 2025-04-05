@@ -19,7 +19,6 @@ DeepNetworkDevelompent/Assignment1/root
 *.xml
 *.yaml
 /ARI/KITTI
-*ipynb
 *.pth
 */.vs/
 *.sqlite
