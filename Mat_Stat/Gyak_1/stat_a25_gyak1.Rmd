@@ -1,0 +1,333 @@
+#1. Feladat
+
+n <- c(5, 3, 6)
+n
+
+#?tlag:
+average = mean(n)
+average
+
+#Medi?n
+med = median(n)
+med
+
+#Rendezett minta
+ordered = order(n)
+ordered
+new_order <- n
+new_order <- new_order[ordered]
+new_order
+
+#Hat?rozzuk meg minden val?s x-re annak a relat?v gyakoris??g?t, hogy a k?s?rlet?nk sor?n x-n?l kisebb ?rt?ket kaptunk. ?br?zoljuk a kapott f?ggv?nyt!
+
+
+eredeti_minden <- ecdf(n)
+plot(eredeti_minden, main="Ta?asztalati eloszl?s",
+     xlab="Dob?sok kimenetele", ylab="F(x)", col="blue", lwd=2)
+
+
+
+#2. Feladat
+```{r}
+dobasok <- c(2,4,3,5,6,5,1,3)
+
+#Tapasztalati eloszl?s fgv - Emp - Empirikus-tapasztalati
+F_tapasz <- ecdf(dobasok)
+F_tapasz
+
+plot(F_tapasz, main="Tapasztalati eloszlás",
+     xlab="Dob?sok kimenetele", ylab="F(x)", col="blue", lwd=2)
+
+elmeleti_dobas <- 1:6
+elmeleti_f <- (1:6)/6
+lines(elmeleti_dobas, elmeleti_f, type="s", col="red", lwd=2, lty=2)
+
+legend("bottomright", legend=c("Tapasztalati Eloszlas", "Elméleti Eloszlás"),
+       col=c("blue","red"), lwd=2, lty=c(1,2))
+```
+
+
+
+
+
+#Extra feladat
+```{r}
+set.seed(5)
+veletlen_dobasok <- round(runif(n=100, min=1, max=6), 0)
+Veletlen_F <- ecdf(veletlen_dobasok)
+Veletlen_F
+
+
+plot(Veletlen_F, main="Tapasztalati eloszlas (Veletlen 100)",
+     xlab="Dob?sok kimenetele", ylab="F(x)", col="black", lwd=2)
+```
+
+
+
+```{r}
+#3. Feladat
+#Egy osztalyban a diakok magassaga: 180, 163, 150, 157, 165, 165, 174, 191, 172, 165, 168, 186 cm. Elemezzek a diakok testmagassagat az atlag, a korrigalt tapasztalati szoras, szorasi egyutthato  boxplot abra (kvartilisek) segitsegevel! ertelmezzuk az eredmenyeket!
+
+magassag <- c(180,163,150,157,165,165,174,191,172,165,165,186)
+#atlag
+diak_atlag <- mean(magassag)
+diak_atlag
+diakokszama <- length(magassag)
+diak_median <? median(magassag)
+
+
+#Ez a beepitett, ezzel lehet mokolni, ha nem kell kiszamolni magadnak.
+#Ez a Korrigált tapasztalati szórás
+tapszoras <- sd(magassag)
+print(tapszoras)
+SqrError <- 0
+#Korrigalt tapasztalti szoras:
+for (i in magassag)
+{
+  i_sqr_error <- (i - diak_atlag)^2
+  SqrError <- SqrError+i_sqr_error
+}
+underSquare <- sqrt(SqrError/(diakokszama-1))
+Korrigalt_tap_szora <- underSquare
+print(Korrigalt_tap_szora)
+#Sz?r?si egy??tthat?
+V <- (Korrigalt_tap_szora/diak_atlag)*100
+
+
+#BoxPlot
+boxplot(x=magassag)
+```
+
+
+
+
+```{r}
+#4. Feladat:
+#Rajzoljuk fel az elozo feladatban a diakok magassagara vonatkozo tapasztalati eloszlasfggvenyt!
+
+Diak_tap_eloszlas <- ecdf(magassag)
+plot(Diak_tap_eloszlas, main="Diakok tapasztalati eloszlasa",
+     xlab="Diakok magassaga", ylab="F(x)", col="green", lwd=2)
+
+
+```
+
+
+#5 feladat
+# Igaz-e, hogy ha egy minta eseten Q1=Q3=9, akkor a median = 9?
+#Igaz
+
+
+#6 feladat
+#Egy allatkiserletben 30 eger tomeget m?rt?k. A k?vetkez? ?r??keket kapt?k: q0,3=17,6 gramm ?s F30(19)=0,9.
+#?rtelmezz?k sz?vegesen ezek jelent?s?t!
+#Ez azt jelenti I guess, hogy az also 0.3 kvartilis ?rt?ke 17,6, vagyis a 70%-a az egereknek 17,6 grammn?l nagyobb,
+#m?g a marad?k 30% pedig 17,6 gramm alatt van. Ezenf?l?l a tapasztalataink szerint, az egerek 90%-a 19 gramm ?s alatta l?v? 
+#grammban vannan.Ezek alapj?n I guess elmondhat?, hogy az egerek t?bbs?g?nek a t?mege 17,6 ?s 19 gramm k?z? esik
+
+
+
+```{r}
+#7. feladat
+csop_I <- c(131, 150, 147, 138, 144)
+csop_II <- c(139, 148, 432, 151, 140)
+
+#Melyek igazak az alabbiak kozul?
+#A. A mintak terjedelme a ket csoportban ugyanakkora. Igaz
+
+csop_I_hossz <- length(csop_I)
+csop_II_hossz <- length(csop_II)
+csop_I_hossz
+csop_II_hossz
+
+
+#B. A mintaatlagok megegyeznek. Hamis
+csop_I_atlag <- mean(csop_I)
+csop_II_atlag <- mean(csop_II)
+csop_I_atlag
+csop_II_atlag
+
+#C. Az interkvartilis terjedelmek ugyanakkor?k. Hamis
+IQR_csop_I <- IQR(csop_I)
+IQR_csop_II <- IQR(csop_II)
+IQR_csop_I
+IQR_csop_II
+
+
+#Az I. csoport adatainak mintaatlaga 142cm, szorassa 7,58 cm. 
+#Szamoljuk ki a szorasi egyutthatot! Mit jelent a mintaatlag, szoras es szorasi egyutthato a szovegkornyezetben?
+
+mintaatlag <- 142
+szoras <- 7.58
+
+Sorasi_egyutthato <- szoras/mintaatlag*100
+Sorasi_egyutthato
+
+```
+
+
+
+
+```{r}
+#8. feladat
+#Vizsgaljuk meg a nyiregyhazan es Karcagon mert 1951 es 1988 kozti napi kozephomersekleti adatokat, melyek a kovetkezo helyeken
+#Ha talalunk hibasnak tuno adatpontot, adjunk javaslatot annak kijavitasara
+library(readxl)
+nyiregypath <- "Nyiregy.xlsx"
+Data_nyiregy <- read_excel(nyiregypath)
+Data_nyiregy <- as.numeric(unlist(Data_nyiregy))
+
+Nyireg_avg <- mean(Data_nyiregy)
+Nyireg_avg
+
+Nyiregy_med <- median(Data_nyiregy)
+Nyiregy_med
+
+boxplot(Data_nyiregy)
+#Itt van hibás mérés, ezt vagy ki kell dropolni, vagy egy átlaggal
+#vagy mediánnal helyettesiteni
+
+karcagpath <- "Karcag.xlsx"
+Data_karcag <- read_excel(karcagpath)
+Data_karcag <- as.numeric(unlist(Data_karcag))
+
+karcag_avg <- mean(Data_karcag)
+karcag_avg
+
+karcag_med <- median(Data_karcag)
+karcag_med
+
+boxplot(Data_karcag)
+#Itt nem latszik, hogy lenne nagyon kiugro adat.
+```
+
+
+
+
+
+```{r}
+#Szorgalmi
+lehetseges_ertekek <- c(-1,0,1,2)
+Gyakorisag <- c(4, 10, 6)
+osszes_elem <- 20
+
+max_atlag <- -1000
+index_atlag_max <-0
+min_atlag <- 1000
+index_atlag_min <- 0
+max_median <- -1000000
+index_median_max <-0
+min_median <- 10000
+index_median_min <-0
+max_korr_szoras <- -100000
+index_max_korr <- 0
+min_korr_szoras <- 100000
+index_min_korr <- 0
+max_szorasi_egyutt <- -100000
+index_max_szorasi <- 0
+min_szorasi_egyutt <-1000000
+index_min_szorasi <- 0
+
+
+for (ertek in lehetseges_ertekek)
+{
+  cat("Index:", ertek, "\n")
+  ertek_1 <- c(rep(-1, 4))
+  ertek_2 <- c(rep(ertek, 10))
+  ertek_3 <- c(rep(2, 6))
+  
+  osszes_ertek <- c(ertek_1, ertek_2, ertek_3)
+  atlag <- mean(osszes_ertek)
+  median_8 <- median(osszes_ertek)
+  cat("Atlag: ", atlag, "\n")
+  cat("MediAn: ", median_8, "\n")
+
+  
+  #KorrigAlt tapasztalati szoras
+  sqrError_8 <- 0
+  for (list_ertek in  osszes_ertek)
+  {
+    sqrError_8 <- sqrError_8 + (list_ertek - atlag)^2
+    
+  }
+  korr_atlag <- sqrError_8/(osszes_elem - 1)
+  Korrigalt_tap_szoras_8 <- sqrt(korr_atlag)
+  cat("Korrigalt szoras: ", Korrigalt_tap_szoras_8, "\n")
+  
+  Szorasi_egyutt_8 <- Korrigalt_tap_szoras_8/atlag*100
+  cat("Szorasi egyutthato: ", Szorasi_egyutt_8, "\n")
+  
+  
+  
+  
+  #Ellenorizzuk, mik lesznek az indexek
+  #max atlag
+  if (atlag > max_atlag){
+    max_atlag <- atlag
+    index_atlag_max <- ertek
+  }
+  #min atlag
+  if (atlag < min_atlag){
+    min_atlag <- atlag
+    index_atlag_min <- ertek
+  }
+  
+  #max median
+  if (median_8 > max_median){
+    max_median <- median_8
+    index_median_max <- ertek
+  }
+  #min median
+  if (median_8 < min_median){
+    min_median <- median_8
+    index_median_min <- ertek
+  }
+  
+  #max max_korr_szoras
+  if (Korrigalt_tap_szoras_8 > max_korr_szoras){
+    max_korr_szoras <- Korrigalt_tap_szoras_8
+    index_max_korr <- ertek
+  }
+  #min max_korr_szoras
+  if (Korrigalt_tap_szoras_8 < min_korr_szoras){
+    min_korr_szoras <- Korrigalt_tap_szoras_8
+    index_min_korr <- ertek
+  }
+  
+  #max szorasi
+  if (Szorasi_egyutt_8 > max_szorasi_egyutt){
+    max_szorasi_egyutt <- Szorasi_egyutt_8
+    index_max_szorasi <- ertek
+  }
+  #min Szorasi egyutt
+  if (Szorasi_egyutt_8 < min_szorasi_egyutt){
+    min_szorasi_egyutt <- Szorasi_egyutt_8
+    index_min_szorasi <- ertek
+  }
+  
+}
+
+print(max_atlag)
+print(index_atlag_max)
+print(min_atlag)
+print(index_atlag_min)
+print(max_median)
+print(index_median_max)
+print(min_median)
+print(index_median_min)
+print(max_korr_szoras)
+print(index_max_korr)
+print(min_korr_szoras)
+print(index_min_korr)
+print(max_szorasi_egyutt)
+print(index_max_szorasi)
+print(min_szorasi_egyutt)
+print(index_min_szorasi)
+```
+
+
+
+
+
+
+

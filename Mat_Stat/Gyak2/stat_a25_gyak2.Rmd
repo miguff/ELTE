@@ -1,0 +1,58 @@
+---
+title: "Matematikai statisztika 2. gyakorlat, 2025/2026 I. félév"
+output:
+  html_document:
+    df_print: paged
+  pdf_document: default
+  word_document: default
+#date: '2025-09-19'
+self_contained: yes
+---
+
+## Elmélet: Becslések
+
+Legyenek $X_1, X_2, \dots , X_n$ független, azonos eloszlású valószínűségi változók (minta) egy $\vartheta$ paraméterrel és legyen ${\bf X} = (X_1, X_2, \dots , X_n)$. A becslés a minta eloszlásának ismeretlen paraméterét közelíti a minta segítségével.
+
+**Definíció:** (*Torzítatlan becslés*).	A $\vartheta$ valós paraméter $T({\bf X} )$ becslése torzítatlan, ha $E(T({\bf X})) = \vartheta$ minden $\vartheta$ paraméterértékre.
+
+## R telepítés
+
+A nyelv telepítéséhez szükséges instrukciók és fájlok [itt](https://cran.r-project.org/) érhetőek el. Az RStudio pedig [itt](https://posit.co/download/rstudio-desktop/).
+
+## Feladatok
+
+**1. Feladat** Legyen $X_1,\ldots,X_n$  független, azonos eloszlású valószínűségi változók  $m$ várható értékkel. Célunk az ismeretlen $m$ paraméter becslése. Tekintsük az alábbi statisztikákat és állapítsuk meg, hogy melyek torzítatlanok!  Amelyik nem torzítatlan, hogyan tudnánk torzítatlanná tenni?
+
+a) $T_1(\mathbf{X})=X_8$,
+
+b) $T_2(\mathbf{X})=\dfrac{X_3+X_7}{2}$,
+
+c) $T_2(\mathbf{X})=\dfrac{X_9+X_{19}}{9}$,
+
+d) $T_3(\mathbf{X})=\overline{X}$.
+
+
+**2. Feladat** Adjunk torzítatlan becslést a  független, azonos $E[0, \vartheta]$  eloszlású  $X_1,\ldots,X_n$   minta $\vartheta$ paraméterére a
+
+a) mintaátlag,
+
+b) minta maximuma segítségével! 
+
+R-ben generáljunk 10000-szer 6 elemű [0,3] intervallumon egyenletes eloszlású mintát és hasonlítsuk össze a maximumot és a b) részben kapott torzítatlan becslést!
+
+
+**3. Feladat** Torzítatlan-e a tapasztalati közép reciproka az exponenciális eloszlás paraméterére? Ha nem, hogyan lehet torzítatlanná tenni?
+
+R-ben generáljunk 10000-szer 6 elemű 0,5 paraméterű exponenciális mintát és határozzuk meg, majd hasonlítsuk össze az előzőekben meghatározott becslést!
+
+
+**4. Feladat** Legyen $X_1,\ldots,X_n$ független, azonos eloszlású minta az $$f_{\alpha} (x) = 
+	\begin{cases} 
+	\frac{1+\alpha x}{2} & \text{ha }\;-1 \leq x \leq 1 \\ 
+	\quad 0 & \text{különben}
+	\end{cases}$$
+sűrűségfüggvényű eloszlásból $-1 \leq \alpha \leq 1$.  Mutassuk meg, hogy $\hat \alpha = 3 \overline{X}$ torzítatlan becslése $\alpha$-nak!
+
+
+**5. Feladat** Legyen $X_1,\ldots,X_n$ független, azonos eloszlású minta, és legyenek $T_1(X)$ és $T_2(X)$ $\vartheta$-nak egy-egy torzítatlan becslése. Mely $a, b \in \mathbb{R}$ értékekre lesz az $aT_1(X) + bT_2(X)$ torzítatlan becslése $\vartheta$-nak?
+
