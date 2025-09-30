@@ -113,6 +113,9 @@ def hill_climbing(
     """
     current = problem.start_state()
     parent = problem.nil
+    visited = {current}
+
+
     while not problem.is_goal_state(current):
         yield current #yielding each state
         next_states = problem.next_states(current)
@@ -120,6 +123,26 @@ def hill_climbing(
         # if with three branches
         # Hint: pseudocode from lecture 3 (local search), slide 5
         #       return None if no solution can be found
+
+        next_possible_states = [s for s in next_states if s != parent and s not in visited]
+        parent = current
+
+        #If no successor then return None
+        if  len(next_possible_states) == 0:
+            return None
+        
+        #else if subtracting the parent is empty, than go back to the parent
+        
+        elif not next_possible_states:
+            current = parent
+        
+        else:
+            current = min(next_possible_states, key=f)
+        
+        visited.add(current)
+        
+
+ 
     yield current
 
 
@@ -155,7 +178,13 @@ def tabu_search(
 
 
 def misplaced(state: State) -> int:
-    return 0 # TODO
+    number_of_misplaced = 0
+
+    for i in range(len(goal)):
+        if goal[i] != state[i]:
+            number_of_misplaced += 1
+
+    return number_of_misplaced # TODO
     # Hint: description on lecture 3 (local search) slide 22
 
 
@@ -189,7 +218,7 @@ heuristics : dict[str, HeuristicFunction] = {"Misplaced": misplaced, "Manhattan"
 layout = [
     [
         sg.Column(board_gui.board_layout),
-        sg.Frame("Log", [[sg.Output(size=(30, 15), key="log")]]),
+        #sg.Frame("Log", [[sg.Output(size=(30, 15), key="log")]]),
     ],
     [
         sg.Frame(
@@ -263,13 +292,13 @@ while True:  # Event Loop
         algorithm = partial(algorithm, f=heuristic)
         path = algorithm(sliding_problem)
         steps = 0
-        window.Element("log").Update("")
+        #window.Element("log").Update("")
         starting = False
         stepping = True
     if event == "Restart":
         path = algorithm(sliding_problem)
         steps = 0
-        window.Element("log").Update("")
+        #window.Element("log").Update("")
         stepping = True
     if event == "Step" or go or stepping:
         try:
