@@ -113,7 +113,6 @@ def hill_climbing(
     """
     current = problem.start_state()
     parent = problem.nil
-    visited = {current}
 
 
     while not problem.is_goal_state(current):
@@ -124,7 +123,7 @@ def hill_climbing(
         # Hint: pseudocode from lecture 3 (local search), slide 5
         #       return None if no solution can be found
 
-        next_possible_states = [s for s in next_states if s != parent and s not in visited]
+        next_possible_states = [s for s in next_states if s != parent]
         parent = current
 
         #If no successor then return None
@@ -137,9 +136,7 @@ def hill_climbing(
         
         else:
             current = min(next_possible_states, key=f)
-        
-        visited.add(current)
-        
+                
 
  
     yield current
@@ -165,12 +162,46 @@ def tabu_search(
     long_time : int
       If the optimum has not changed in 'long_time' steps, the algorithm stops.
     """
-    pass
     # TODO 
     # Hint: pseudocode from lecture 3 (local search), slide 11
     #       return None if no solution is found
     #       don't forget to yield each state
     #       don't forget about set operations (such as subtraction)
+
+    current = problem.start_state()
+    opt = current
+    tabu = set()
+    same_best_steps = 0
+
+    while not problem.is_goal_state(current):
+        yield current #yielding each state
+        print(current)
+
+        next_states = problem.next_states(current)
+        next_possible_states = [s for s in next_states if s not in tabu]
+
+        if not next_possible_states:
+            return None
+        
+        next_state = min(next_possible_states, key=f)
+        tabu.add(current)
+        current = next_state
+
+        if len(tabu) > tabu_len:
+            tabu.pop()
+
+        if f(current) < f(opt):
+            opt = current
+            same_best_steps = 0
+        else:
+            same_best_steps += 1
+
+        if same_best_steps >= long_time:
+            return None
+        
+    yield current
+
+
 
 
 # heuristics
