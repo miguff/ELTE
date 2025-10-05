@@ -132,7 +132,6 @@ def hill_climbing(
             return None
         
         #else if subtracting the parent is empty, than go back to the parent
-        
         elif not next_possible_states:
             current = parent
         
@@ -189,12 +188,53 @@ def misplaced(state: State) -> int:
 
 
 def manhattan(state: State) -> int:
-    return 0 # TODO
+
+    total = 0
+
+    for id, value in enumerate(state):
+        goal_id = goal.index(value)
+        #Coordinates of current version
+        x1, y1 = divmod(id, 3)
+
+        #Coordinates of the Goal
+        x2, y2 = divmod(goal_id, 3)
+
+        #Check how many steps do we need in vertical and horizontal
+        total += abs(x1 - x2) + abs(y1 - y2)
+
+
+    return total # TODO
     # Hint: description on lecture 3 (local search) slide 22
 
 
 def frame(state: State) -> int:
-    return 0 # TODO
+
+    score = 0
+    corner_indexes = [0, 2, 6, 8]
+    corner_value = [1, 3, 7, 5]
+    clockwise_indexes = [0, 1, 2, 5, 8, 7, 6, 3]
+    goal_edge_vals = [goal[i] for i in clockwise_indexes]
+    successor = {
+        goal_edge_vals[i]: goal_edge_vals[(i + 1) % len(goal_edge_vals)]
+        for i in range(len(goal_edge_vals))
+    }
+
+    #Score +1
+    for k, pos in enumerate(clockwise_indexes):
+        tile = state[pos]
+        if tile == 0:
+            continue
+        neighbor_pos = clockwise_indexes[(k + 1) % len(clockwise_indexes)]
+        neighbor_tile = state[neighbor_pos]
+
+        if neighbor_tile != successor[tile]:
+            score += 1
+    # #Score +2
+    for corner_index, corner_value in zip(corner_indexes, corner_value):
+        if state[corner_index] != corner_value:
+            score += 2  
+
+    return score # TODO
     # Hint: description on lecture 3 (local search) slide 22
 
 
