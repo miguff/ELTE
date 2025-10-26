@@ -51,3 +51,6 @@ ImageandSignal/Assignment3/python/yolo11n.pt
 ImageandSignal/Assignment3/train/labels.cache
 ImageandSignal/Assignment3/valid/labels.cache
 .Rproj.user
+Robotics/ros2_ws/build/*
+Robotics/ros2_ws/install/*
+Robotics/ros2_ws/log/*
